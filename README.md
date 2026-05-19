@@ -1,20 +1,24 @@
 Gramify
 An interactive physics motion simulator for high school students and educators.
-Features
+
+FEATURES
 
 ->Linear, Accelerated, and Projectile Motion simulations
 ->Real-time diagrams (x-t, v-t, x-y trajectory)
 ->Kinetic energy calculations
 ->Simple and clean interface
 
-How to use
-
+HOW TO USE
 ->Select a motion type
 ->Enter your values
 ->Hit Run Simulation
 
-Requirements
+REQUIREMENTS
 
 ->Python 3
 ->numpy
 ->matplotlib
+
+DOWNLOAD
+
+The .app file is available inside /dist. 
