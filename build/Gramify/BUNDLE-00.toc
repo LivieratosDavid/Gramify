@@ -1,0 +1,3 @@
+([('Gramify',
+   '/Users/david/Projects/Gravitational-Orbit/dist/Gramify',
+   'EXECUTABLE')],)
