@@ -3,7 +3,7 @@ An interactive physics motion simulator for high school students and educators.
 
 FEATURES
 
-->Linear, Accelerated, and Projectile Motion simulations
+->Linear, Accelerated, and Projectile Motion simulations      
 ->Real-time diagrams (x-t, v-t, x-y trajectory)
 ->Kinetic energy calculations
 ->Simple and clean interface
