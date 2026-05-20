@@ -1,4 +1,4 @@
-Gramify
+Gramify -
 An interactive physics motion simulator for high school students and educators.
 
 FEATURES
