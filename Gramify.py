@@ -63,7 +63,8 @@ def simulate():
         if motion == "Linear Motion":
             x = v0 * t
             v = np.full_like(t, v0)
-            K = 1/2 * m * v**2
+            dK = 0
+            U = 0
 
 
             if diagram == "x-t":
@@ -76,6 +77,8 @@ def simulate():
             plt.title(title)
             plt.xlabel("Time (s)")
             plt.ylabel(ylabel)
+            plt.figtext(0.15, 0.02, f"U={U} J", fontsize=9, color = "red")
+            plt.figtext(0.02, 0.02, f"ΔK = {dK} J", fontsize=9, color="darkred")
             plt.grid(True)
             plt.show()
 
@@ -87,6 +90,7 @@ def simulate():
             K_init = 1/2 * m * v0**2
             K_final = 1/2 * m * v[-1]**2
             d_K = K_final - K_init
+            U = 0
 
 
             if diagram == "x-t":
@@ -100,30 +104,45 @@ def simulate():
             plt.xlabel("Time (s)")
             plt.ylabel(ylabel)
             plt.grid(True)
-            plt.figtext(0.15, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
+            plt.figtext(0.15, 0.02, f"U={U}", fontsize=9, color = "red")
+            plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
             plt.show()
 
         # ---------------- PROJECTILE MOTION ----------------
         elif motion == "Projectile Motion":
+        # -------------- MATH ------------------- 
             theta = float(angle_entry.get())
             h0 = float(height_entry.get())
             angle = np.radians(theta)
-            vx = v0 * np.cos(angle)
-            vy = v0 * np.sin(angle)
-            vy_final = np.sqrt(vy**2 + 2*g*h0)
-            v_final = np.sqrt(vx**2 + vy_final**2)
+            vx = v0 * np.cos(angle)        # ← must be before y
+            vy = v0 * np.sin(angle)        # ← must be before y
             x = vx * t
+            y = np.maximum(h0 + vy * t - 0.5 * g * t**2, 0)
+
+            landing_index = np.where(y == 0)[0]   # ← cutoff before t_flight
+            if len(landing_index) > 0:
+                cutoff = landing_index[0]
+                x = x[:cutoff]
+                y = y[:cutoff]
+
+            t_flight = t[len(y)-1]         # ← after cutoff
+            vy_final = vy - g * t_flight
+            v_final = np.sqrt(vx**2 + vy_final**2)
             K_init = 1/2 * m * v0**2
             K_final = 1/2 * m * v_final**2
             d_K = K_final - K_init
-            y = np.maximum(h0 + vy * t - 0.5 * g * t**2, 0)
-
+            U_start = m * g * h0
+            U_final = 0
+            dU = U_start - U_final
+        # ----------- DIAGRAMS -----------
             if diagram == "x-t":
                 plt.figure(figsize=(8, 5))
                 plt.plot(t, x, color="red", linewidth=3)
                 plt.title("Projectile Motion: x-t")
                 plt.xlabel("Time (s)")
                 plt.ylabel("Horizontal Distance (m)")
+                plt.figtext(0.15, 0.02, f"ΔU={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.grid(True)
                 plt.show()
 
@@ -133,6 +152,8 @@ def simulate():
                 plt.title("Projectile Motion: y-t")
                 plt.xlabel("Time (s)")
                 plt.ylabel("Vertical Distance (m)")
+                plt.figtext(0.15, 0.02, f"U={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.grid(True)
                 plt.show()
 
@@ -143,7 +164,8 @@ def simulate():
                 plt.xlabel("Horizontal Distance (m)")
                 plt.ylabel("Vertical Distance (m)")
                 plt.grid(True)
-                plt.figtext(0.15, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
+                plt.figtext(0.15, 0.02, f"U={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.show()
 
     except ValueError:
