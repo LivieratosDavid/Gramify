@@ -28,6 +28,10 @@ def update_diagrams(*args):
         height_entry.place_forget()
         acceleration_label.place_forget()
         acceleration_entry.place_forget()
+        k_label.place_forget()
+        k_entry.place_forget()
+        displacement_label.place_forget()
+        displacement_entry.place_forget()
 
     elif motion == "Accelerated Motion":
         diagram_menu["values"] = ["x-t", "v-t"]
@@ -37,6 +41,10 @@ def update_diagrams(*args):
         angle_entry.place_forget()
         height_label.place_forget()
         height_entry.place_forget()
+        k_label.place_forget()
+        k_entry.place_forget()
+        displacement_label.place_forget()
+        displacement_entry.place_forget()
 
     elif motion == "Projectile Motion":
         diagram_menu["values"] = ["x-t", "y-t", "x-y"]
@@ -46,6 +54,23 @@ def update_diagrams(*args):
         height_entry.place(x=250, y=400, anchor="center")
         acceleration_label.place_forget()
         acceleration_entry.place_forget()
+        k_label.place_forget()
+        k_entry.place_forget()
+        displacement_label.place_forget()
+        displacement_entry.place_forget()
+
+    elif motion == "Simple Harmonic Motion":
+        diagram_menu["values"] = ["x-t"]
+        k_label.place(x=250, y=320, anchor="center")
+        k_entry.place(x=250, y=345, anchor="center")
+        displacement_label.place(x=250, y=375, anchor="center")
+        displacement_entry.place(x=250, y=400, anchor="center")
+        height_label.place_forget()
+        height_entry.place_forget()
+        acceleration_label.place_forget()
+        acceleration_entry.place_forget()
+        angle_label.place_forget()
+        angle_entry.place_forget()
 
     diagram_var.set(diagram_menu["values"][0])
 
@@ -66,7 +91,6 @@ def simulate():
             dK = 0
             U = 0
 
-
             if diagram == "x-t":
                 y_data, ylabel, title = x, "Distance (m)", "Linear Motion: x-t"
             else:
@@ -77,7 +101,7 @@ def simulate():
             plt.title(title)
             plt.xlabel("Time (s)")
             plt.ylabel(ylabel)
-            plt.figtext(0.15, 0.02, f"U={U} J", fontsize=9, color = "red")
+            plt.figtext(0.15, 0.02, f"U={U} J", fontsize=9, color="red")
             plt.figtext(0.02, 0.02, f"ΔK = {dK} J", fontsize=9, color="darkred")
             plt.grid(True)
             plt.show()
@@ -92,7 +116,6 @@ def simulate():
             d_K = K_final - K_init
             U = 0
 
-
             if diagram == "x-t":
                 y_data, ylabel, title = x, "Distance (m)", "Accelerated Motion: x-t"
             else:
@@ -104,28 +127,27 @@ def simulate():
             plt.xlabel("Time (s)")
             plt.ylabel(ylabel)
             plt.grid(True)
-            plt.figtext(0.15, 0.02, f"U={U}", fontsize=9, color = "red")
+            plt.figtext(0.15, 0.02, f"U={U}", fontsize=9, color="red")
             plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
             plt.show()
 
         # ---------------- PROJECTILE MOTION ----------------
         elif motion == "Projectile Motion":
-        # -------------- MATH ------------------- 
             theta = float(angle_entry.get())
             h0 = float(height_entry.get())
             angle = np.radians(theta)
-            vx = v0 * np.cos(angle)        # ← must be before y
-            vy = v0 * np.sin(angle)        # ← must be before y
+            vx = v0 * np.cos(angle)
+            vy = v0 * np.sin(angle)
             x = vx * t
             y = np.maximum(h0 + vy * t - 0.5 * g * t**2, 0)
 
-            landing_index = np.where(y == 0)[0]   # ← cutoff before t_flight
+            landing_index = np.where(y == 0)[0]
             if len(landing_index) > 0:
                 cutoff = landing_index[0]
                 x = x[:cutoff]
                 y = y[:cutoff]
 
-            t_flight = t[len(y)-1]         # ← after cutoff
+            t_flight = t[len(y)-1]
             vy_final = vy - g * t_flight
             v_final = np.sqrt(vx**2 + vy_final**2)
             K_init = 1/2 * m * v0**2
@@ -134,25 +156,25 @@ def simulate():
             U_start = m * g * h0
             U_final = 0
             dU = U_start - U_final
-        # ----------- DIAGRAMS -----------
+
             if diagram == "x-t":
                 plt.figure(figsize=(8, 5))
-                plt.plot(t, x, color="red", linewidth=3)
+                plt.plot(t[:len(x)], x, color="red", linewidth=3)
                 plt.title("Projectile Motion: x-t")
                 plt.xlabel("Time (s)")
                 plt.ylabel("Horizontal Distance (m)")
-                plt.figtext(0.15, 0.02, f"ΔU={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.15, 0.02, f"ΔU={dU:.2f} J", fontsize=9, color="red")
                 plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.grid(True)
                 plt.show()
 
             elif diagram == "y-t":
                 plt.figure(figsize=(8, 5))
-                plt.plot(t, y, color="red", linewidth=3)
+                plt.plot(t[:len(y)], y, color="red", linewidth=3)
                 plt.title("Projectile Motion: y-t")
                 plt.xlabel("Time (s)")
                 plt.ylabel("Vertical Distance (m)")
-                plt.figtext(0.15, 0.02, f"U={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.15, 0.02, f"ΔU={dU:.2f} J", fontsize=9, color="red")
                 plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.grid(True)
                 plt.show()
@@ -164,9 +186,24 @@ def simulate():
                 plt.xlabel("Horizontal Distance (m)")
                 plt.ylabel("Vertical Distance (m)")
                 plt.grid(True)
-                plt.figtext(0.15, 0.02, f"U={dU} J", fontsize=9, color = "red")
+                plt.figtext(0.15, 0.02, f"ΔU={dU:.2f} J", fontsize=9, color="red")
                 plt.figtext(0.02, 0.02, f"ΔK = {d_K:.2f} J", fontsize=9, color="darkred")
                 plt.show()
+
+        # ---------------- SIMPLE HARMONIC MOTION ----------------
+        elif motion == "Simple Harmonic Motion":
+            k = float(k_entry.get())
+            A = float(displacement_entry.get())
+            omega = np.sqrt(k / m)
+            x = A * np.cos(omega * t)
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(t, x, color="red", linewidth=3)
+            plt.title("Simple Harmonic Motion: x-t")
+            plt.xlabel("Time (s)")
+            plt.ylabel("Displacement (m)")
+            plt.grid(True)
+            plt.show()
 
     except ValueError:
         messagebox.showerror("Error", "Please enter valid numbers.")
@@ -182,7 +219,7 @@ title_label.place(x=250, y=25, anchor="center")
 motion_label = tk.Label(window, text="Select Motion Type:")
 motion_label.place(x=250, y=70, anchor="center")
 motion_menu = ttk.Combobox(window, textvariable=motion_var,
-                           values=["Linear Motion", "Accelerated Motion", "Projectile Motion"],
+                           values=["Linear Motion", "Accelerated Motion", "Projectile Motion", "Simple Harmonic Motion"],
                            state="readonly")
 motion_menu.place(x=250, y=95, anchor="center")
 
@@ -192,12 +229,6 @@ time_label.place(x=250, y=140, anchor="center")
 time_entry = tk.Entry(window)
 time_entry.place(x=250, y=165, anchor="center")
 
-# Mass Entry
-mass_label = tk.Label(window, text="Mass (kg):")
-mass_entry = tk.Entry(window)
-mass_label.place(x=250, y=265, anchor="center")
-mass_entry.place(x=250, y=290, anchor="center")
-
 # Initial velocity
 velocity_label = tk.Label(window, text="Initial Velocity (m/s):")
 velocity_label.place(x=250, y=205, anchor="center")
@@ -205,6 +236,8 @@ velocity_entry = tk.Entry(window)
 velocity_entry.place(x=250, y=230, anchor="center")
 
 # Mass
+mass_label = tk.Label(window, text="Mass (kg):")
+mass_entry = tk.Entry(window)
 mass_label.place(x=250, y=265, anchor="center")
 mass_entry.place(x=250, y=290, anchor="center")
 
@@ -220,7 +253,15 @@ angle_entry = tk.Entry(window)
 height_label = tk.Label(window, text="Initial Height (m):")
 height_entry = tk.Entry(window)
 
-# Diagram selection — pushed down to make room for angle + height
+# Spring constant (hidden by default, shown for Simple Harmonic Motion)
+k_label = tk.Label(window, text="Spring Constant (N/m):")
+k_entry = tk.Entry(window)
+
+# Amplitude (hidden by default, shown for Simple Harmonic Motion)
+displacement_label = tk.Label(window, text="Amplitude (m):")
+displacement_entry = tk.Entry(window)
+
+# Diagram selection
 diagram_label = tk.Label(window, text="Select Diagram:")
 diagram_label.place(x=250, y=440, anchor="center")
 diagram_menu = ttk.Combobox(window, textvariable=diagram_var,
