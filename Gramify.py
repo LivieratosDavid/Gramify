@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import ttk, messagebox
-
+import subprocess
 g = 9.81
 
 # ---------------- MAIN WINDOW ----------------
@@ -14,6 +14,7 @@ window.resizable(False, False)
 # ---------------- VARIABLES ----------------
 motion_var = tk.StringVar(value="Linear Motion")
 diagram_var = tk.StringVar(value="x-t")
+orbit_var = tk.StringVar(value="")
 
 
 # ---------------- FUNCTIONS ----------------
@@ -71,11 +72,35 @@ def update_diagrams(*args):
         acceleration_entry.place_forget()
         angle_label.place_forget()
         angle_entry.place_forget()
-
+        
+    
     diagram_var.set(diagram_menu["values"][0])
 
+def update_orbits(*args):
+
+    orbit = orbit_var.get()
+
+    if orbit == "Earth":
+        height_label.place_forget()
+        height_entry.place_forget()
+        acceleration_label.place_forget()
+        acceleration_entry.place_forget()
+        angle_label.place_forget()
+        angle_entry.place_forget()
+        k_label.place_forget()
+        displacement_label.place_forget()
+        displacement_entry.place_forget()
+        diagram_label.place_forget()
+        diagram_menu.place_forget()
+    
+    update_diagrams()
 
 def simulate():
+    orbit = orbit_var.get()
+
+    if orbit == "Earth":
+        run_orbit()
+        return
     try:
         motion = motion_var.get()
         t_max = float(time_entry.get())
@@ -208,6 +233,8 @@ def simulate():
     except ValueError:
         messagebox.showerror("Error", "Please enter valid numbers.")
 
+def run_orbit():
+    subprocess.Popen(["python3", "orbits.py"])
 
 # ---------------- WIDGETS ----------------
 
@@ -217,11 +244,29 @@ title_label.place(x=250, y=25, anchor="center")
 
 # Motion type
 motion_label = tk.Label(window, text="Select Motion Type:")
-motion_label.place(x=250, y=70, anchor="center")
-motion_menu = ttk.Combobox(window, textvariable=motion_var,
-                           values=["Linear Motion", "Accelerated Motion", "Projectile Motion", "Simple Harmonic Motion"],
-                           state="readonly")
-motion_menu.place(x=250, y=95, anchor="center")
+motion_label.place(x=140, y=70, anchor="center")
+motion_menu = ttk.Combobox(
+                            window, textvariable=motion_var,
+                            values=["Linear Motion", 
+                                   "Accelerated Motion", 
+                                   "Projectile Motion", 
+                                   "Simple Harmonic Motion"],
+                            state="readonly",
+                            width=18
+                            )
+motion_menu.place(x=140, y=95, anchor="center")
+
+# Orbit Animations
+orbit_label = tk.Label(window, text="Select Orbit Animation:")
+orbit_label.place(x=350, y=70, anchor="center")
+orbit_menu = ttk.Combobox(
+                            window, textvariable=orbit_var,
+                            values=["Earth"
+                                   ],
+                            state="readonly",
+                            width=18
+                            )
+orbit_menu.place(x=350, y=95, anchor="center")
 
 # Max time
 time_label = tk.Label(window, text="Maximum Time (s):")
@@ -276,5 +321,6 @@ simulate_button.place(x=250, y=560, anchor="center")
 
 # ---------------- START ----------------
 motion_var.trace_add("write", update_diagrams)
+orbit_var.trace_add("write", update_orbits)
 update_diagrams()
 window.mainloop()
