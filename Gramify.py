@@ -18,6 +18,16 @@ orbit_var = tk.StringVar(value="")
 
 
 # ---------------- FUNCTIONS ----------------
+def reset():
+    time_entry.delete(0, tk.END)
+    acceleration_entry.delete(0, tk.END)
+    velocity_entry.delete(0, tk.END)
+    mass_entry.delete(0, tk.END)
+    height_entry.delete(0, tk.END)
+    angle_entry.delete(0, tk.END)
+    displacement_entry.delete(0, tk.END)
+    k_entry.delete(0, tk.END)
+
 def update_diagrams(*args):
     motion = motion_var.get()
 
@@ -25,14 +35,20 @@ def update_diagrams(*args):
         diagram_menu["values"] = ["x-t", "v-t"]
         angle_label.place_forget()
         angle_entry.place_forget()
+        print("angle")
         height_label.place_forget()
         height_entry.place_forget()
+        print("height")
         acceleration_label.place_forget()
         acceleration_entry.place_forget()
+        print("acc")
         k_label.place_forget()
         k_entry.place_forget()
+        print("k")
         displacement_label.place_forget()
         displacement_entry.place_forget()
+        print("A")
+        print("yo")
 
     elif motion == "Accelerated Motion":
         diagram_menu["values"] = ["x-t", "v-t"]
@@ -92,8 +108,8 @@ def update_orbits(*args):
         displacement_entry.place_forget()
         diagram_label.place_forget()
         diagram_menu.place_forget()
-    
-    update_diagrams()
+    else:
+        update_diagrams()
 
 def simulate():
     orbit = orbit_var.get()
@@ -307,18 +323,26 @@ displacement_label = tk.Label(window, text="Amplitude (m):")
 displacement_entry = tk.Entry(window)
 
 # Diagram selection
-diagram_label = tk.Label(window, text="Select Diagram:")
+diagram_label = tk.Label(window, text="Select Graph:")
 diagram_label.place(x=250, y=440, anchor="center")
 diagram_menu = ttk.Combobox(window, textvariable=diagram_var,
-                            values=["x-t", "v-t"], state="readonly")
+                            values=["x-t", "v-t"], 
+                            state="readonly")
 diagram_menu.place(x=250, y=465, anchor="center")
 
 # Simulate button
 simulate_button = tk.Button(window, text="Run Simulation",
-                            font=("Arial", 12, "bold"), bg="lightblue",
+                            font=("Arial", 13, "bold"), 
+                            bg="lightblue",
                             command=simulate)
-simulate_button.place(x=250, y=560, anchor="center")
+simulate_button.place(x=170, y=560, anchor="center")
 
+# Reset button
+reset_button = tk.Button(window, text="Reset",
+                            font=("Arial", 13, "bold"), 
+                            bg="lightblue",
+                            command=reset)
+reset_button.place(x=350, y=560, anchor="center")
 # ---------------- START ----------------
 motion_var.trace_add("write", update_diagrams)
 orbit_var.trace_add("write", update_orbits)
